@@ -60,7 +60,7 @@ Serviço **comercial-service**, porta **8103**, atrás do `dev_SpringBoot_Gatewa
 
 ## Desenvolvimento
 
-O `sebratel-parent` vem do GitHub Packages (privado). Antes do primeiro build, crie no `~/.m2/settings.xml` um servidor
+O `sebratel-java-parent` vem do GitHub Packages (o Maven exige token `read:packages` até para pacotes públicos). Antes do primeiro build, crie no `~/.m2/settings.xml` um servidor
 `github` com um token `read:packages`:
 
 ```xml
