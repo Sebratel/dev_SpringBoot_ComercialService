@@ -1,0 +1,30 @@
+package br.com.sebratel.comercial.service;
+
+import br.com.sebratel.comercial.repository.erp.ContractPaymentRepository;
+import br.com.sebratel.comercial.dto.ContractFirstPaymentDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ContractPaymentService {
+
+    @Autowired
+    private ContractPaymentRepository repository;
+
+    public List<ContractFirstPaymentDTO> getFirstPaymentReport() {
+        return repository.findFirstContractPayments().stream().map(p -> {
+            ContractFirstPaymentDTO dto = new ContractFirstPaymentDTO();
+            dto.setNome(p.getNome());
+            dto.setNumeroContrato(p.getNumeroContrato());
+            dto.setPrimeiraEmissao(p.getPrimeiraEmissao());
+            dto.setPagamentoCliente(p.getPagamentoCliente());
+            dto.setDataCriacao(p.getDataCriacao());
+            dto.setContractNumber(p.getContractnumber());
+            dto.setDescription(p.getDescription());
+            dto.setStatus(p.getStatus());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+}

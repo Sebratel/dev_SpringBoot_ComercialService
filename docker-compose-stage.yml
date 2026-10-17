@@ -7,13 +7,16 @@ services:
     pull_policy: always
     container_name: comercial-service-stage
     restart: unless-stopped
-    mem_limit: 512m
+    mem_limit: 768m
     networks:
       - proxy
     environment:
       - SERVER_PORT=8103
       - APP_ENV=staging
       - TZ=America/Sao_Paulo
+      - ERP_DB_URL=${ERP_DB_URL}
+      - ERP_DB_USER=${ERP_DB_USER}
+      - ERP_DB_PASS=${ERP_DB_PASS}
     healthcheck:
       test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8103'"]
       interval: 30s

@@ -1,0 +1,47 @@
+package br.com.sebratel.comercial.controller;
+
+import br.com.sebratel.comercial.BaseTest;
+import br.com.sebratel.comercial.controller.scripts.ContractPaymentController;
+import br.com.sebratel.comercial.dto.ContractFirstPaymentDTO;
+import br.com.sebratel.comercial.service.ContractPaymentService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(ContractPaymentController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class ContractPaymentControllerTest extends BaseTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private ContractPaymentService contractPaymentService;
+
+    @Test
+    @DisplayName("Deve retornar 200 ao recuperar relatório de primeiros pagamentos")
+    void getFirstPaymentsSucesso() throws Exception {
+        ContractFirstPaymentDTO dto = new ContractFirstPaymentDTO();
+        List<ContractFirstPaymentDTO> lista = List.of(dto);
+
+        when(contractPaymentService.getFirstPaymentReport()).thenReturn(lista);
+
+        mockMvc.perform(get("/api/v1/contract-payments/first-activation")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+}
