@@ -17,14 +17,15 @@ public class ContractActivationService {
     public List<ContractActivationDTO> getActivationReport() {
         return repository.findMergedContractData().stream().map(p -> {
             ContractActivationDTO dto = new ContractActivationDTO();
-            dto.setDataCriacaoContrato(p.getDataCriacaoContrato().toString());
+            // contrato ainda sem instalacao/despacho chega do ERP com data de ativacao nula (LEFT JOIN)
+            dto.setDataCriacaoContrato(p.getDataCriacaoContrato() == null ? null : p.getDataCriacaoContrato().toString());
             dto.setClientes(p.getClientes());
             dto.setStatusContrato(p.getStatusContrato());
             dto.setStatusCancelamento(p.getStatusCancelamento());
             dto.setContrato(p.getContrato());
             dto.setVendedor(p.getVendedor());
             dto.setTecnologia(p.getTecnologia());
-            dto.setDataAtivacao(p.getDataAtivacao().toString());
+            dto.setDataAtivacao(p.getDataAtivacao() == null ? null : p.getDataAtivacao().toString());
             return dto;
         }).collect(Collectors.toList());
     }

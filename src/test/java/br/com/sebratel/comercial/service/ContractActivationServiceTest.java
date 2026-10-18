@@ -15,7 +15,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -78,13 +77,21 @@ class ContractActivationServiceTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoDataForNula() {
-        ContractActivationProjection p = mock(ContractActivationProjection.class);
-        when(p.getDataCriacaoContrato()).thenReturn(null);
-        when(repository.findMergedContractData()).thenReturn(List.of(p));
+    void deveManterContratoSemDatasEmVezDeFalharORelatorioInteiro() {
+        ContractActivationProjection semDatas = mock(ContractActivationProjection.class);
+        when(semDatas.getContrato()).thenReturn("111");
+        ContractActivationProjection comDatas = mock(ContractActivationProjection.class);
+        when(comDatas.getContrato()).thenReturn("222");
+        when(comDatas.getDataCriacaoContrato()).thenReturn(LocalDateTime.of(2026, 1, 2, 3, 4));
+        when(comDatas.getDataAtivacao()).thenReturn(LocalDateTime.of(2026, 1, 5, 6, 7));
+        when(repository.findMergedContractData()).thenReturn(List.of(semDatas, comDatas));
 
-        assertThrows(NullPointerException.class, () -> {
-            service.getActivationReport();
-        });
+        List<ContractActivationDTO> resultado = service.getActivationReport();
+
+        assertEquals(2, resultado.size());
+        assertEquals("111", resultado.get(0).getContrato());
+        assertNull(resultado.get(0).getDataCriacaoContrato());
+        assertNull(resultado.get(0).getDataAtivacao());
+        assertEquals("2026-01-05T06:07", resultado.get(1).getDataAtivacao());
     }
 }
